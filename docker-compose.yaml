@@ -1,0 +1,29 @@
+version: '3'
+services:
+  mysql:
+        image: mysql:8.0
+        container_name: mysql-server-80
+        volumes:
+          - ./mysql/test_base.sql:/docker-entrypoint-initdb.d/dump.sql
+          - ./mysql/myconf.cnf:/etc/mysql/conf.d/custom.cnf
+        restart: always
+        environment:
+          - MYSQL_ROOT_PASSWORD=.sweetpwd.
+          - MYSQL_DATABASE=my_db
+          - MYSQL_USER=usr
+          - MYSQL_PASSWORD=pwd
+       
+        ports:
+          - "3306:3306"
+        
+  website:
+    container_name: test-php-groups
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - 8000:80
+    depends_on:
+      - mysql
